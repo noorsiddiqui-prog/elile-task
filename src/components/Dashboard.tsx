@@ -1,7 +1,12 @@
 import { useState } from "react";
 import IdentityGraph from "./IdentityGraph";
-import type { GraphData } from "../types";
+import AdjacencyMatrix from "./Adjacencymatrix";
+import ClusterView from "./Clusterview";
+import ChainView from "./Chainview";
+import SunburstView from "./Sunburstview";
 import AddEntityModal from "./AddEntityModal";
+import TreeView from "./Treeview";
+import type { GraphData } from "../types";
 
 interface Props {
   graphData: GraphData;
@@ -45,6 +50,7 @@ function shortLabel(id: string, maxLen = 18) {
 export default function Dashboard({ graphData, onAddEntity, onExport, onRunAnalysis, isAnalyzing }: Props) {
   const [activeNav, setActiveNav] = useState("Identity Graph");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [viewMode, setViewMode] = useState<"network" | "matrix" | "cluster" | "chain" | "sunburst" | "tree">("network");
 
   const avgConf = Math.round(
     (graphData.edges.reduce((s, e) => s + e.confidence, 0) / graphData.edges.length) * 100
@@ -235,19 +241,53 @@ export default function Dashboard({ graphData, onAddEntity, onExport, onRunAnaly
                 overflow: "hidden",
               }}>
                 <div style={{
-                  padding: "12px 16px",
+                  padding: "10px 16px",
                   borderBottom: "1px solid #1e293b",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: 8,
                 }}>
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: "#94a3b8" }}>Graph View</span>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <span style={{ fontSize: 10, color: "#475569", background: "#1e293b", padding: "3px 8px", borderRadius: 4 }}>Force-directed</span>
-                    <span style={{ fontSize: 10, color: "#475569", background: "#1e293b", padding: "3px 8px", borderRadius: 4 }}>D3.js</span>
+                  <div style={{ display: "flex", gap: 4, background: "#080d14", border: "1px solid #1e293b", borderRadius: 8, padding: 3, flexWrap: "wrap" }}>
+                    {([
+                      { key: "network",  label: "Network" },
+                      { key: "tree",     label: "Tree" },
+                      { key: "matrix",   label: "Matrix" },
+                      { key: "cluster",  label: "Clusters" },
+                      { key: "chain",    label: "Chain" },
+                      { key: "sunburst", label: "Sunburst" },
+                    ] as const).map(({ key, label }) => {
+                      const active = viewMode === key;
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => setViewMode(key)}
+                          style={{
+                            padding: "5px 12px",
+                            borderRadius: 6,
+                            border: "none",
+                            background: active ? "#6366f1" : "transparent",
+                            color: active ? "white" : "#64748b",
+                            fontSize: 11.5,
+                            fontWeight: active ? 700 : 500,
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-                <IdentityGraph data={graphData} />
+                {viewMode === "network" && <IdentityGraph data={graphData} />}
+                {viewMode === "tree" && <TreeView data={graphData} />}
+                {viewMode === "matrix" && <AdjacencyMatrix data={graphData} />}
+                {viewMode === "cluster" && <ClusterView data={graphData} />}
+                {viewMode === "chain" && <ChainView data={graphData} />}
+                {viewMode === "sunburst" && <SunburstView data={graphData} />}
               </div>
 
               {/* Legend */}
@@ -260,11 +300,45 @@ export default function Dashboard({ graphData, onAddEntity, onExport, onRunAnaly
                   </div>
                 ))}
                 <div style={{ width: 1, height: 12, background: "#1e293b" }} />
-                <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Edges</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <div style={{ width: 48, height: 3, borderRadius: 2, background: "linear-gradient(to right, #ef4444, #22c55e)" }} />
-                  <span style={{ fontSize: 11.5, color: "#64748b" }}>Confidence low → high</span>
-                </div>
+                {viewMode === "network" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Edges</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                      <div style={{ width: 48, height: 3, borderRadius: 2, background: "linear-gradient(to right, #ef4444, #22c55e)" }} />
+                      <span style={{ fontSize: 11.5, color: "#64748b" }}>Confidence low → high</span>
+                    </div>
+                  </>
+                )}
+                {viewMode === "tree" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Levels</span>
+                    <span style={{ fontSize: 11.5, color: "#64748b" }}>Depth = steps from a root entity</span>
+                  </>
+                )}
+                {viewMode === "matrix" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Cells</span>
+                    <span style={{ fontSize: 11.5, color: "#64748b" }}>Row → column confidence, color-coded</span>
+                  </>
+                )}
+                {viewMode === "cluster" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Clusters</span>
+                    <span style={{ fontSize: 11.5, color: "#64748b" }}>Entities connected directly or transitively</span>
+                  </>
+                )}
+                {viewMode === "chain" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Steps</span>
+                    <span style={{ fontSize: 11.5, color: "#64748b" }}>Order links were resolved, not real timestamps</span>
+                  </>
+                )}
+                {viewMode === "sunburst" && (
+                  <>
+                    <span style={{ fontSize: 9.5, color: "#334155", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>Rings</span>
+                    <span style={{ fontSize: 11.5, color: "#64748b" }}>Inner = type, outer thickness = connections</span>
+                  </>
+                )}
               </div>
             </div>
 
