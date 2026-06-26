@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import type { GraphData, GraphNode } from "../types";
+import type { GraphData, GraphNode } from "../../types";
 
 interface Props {
   data: GraphData;

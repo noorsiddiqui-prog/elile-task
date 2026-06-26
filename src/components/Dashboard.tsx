@@ -1,11 +1,11 @@
 import { useState } from "react";
-import IdentityGraph from "./IdentityGraph";
-import AdjacencyMatrix from "./Adjacencymatrix";
-import ClusterView from "./Clusterview";
-import ChainView from "./Chainview";
-import SunburstView from "./Sunburstview";
-import AddEntityModal from "./AddEntityModal";
-import TreeView from "./Treeview";
+import IdentityGraph from "./graph-views/IdentityGraph";
+import AdjacencyMatrix from "./graph-views/Adjacencymatrix";
+import ClusterView from "./graph-views/Clusterview";
+import ChainView from "./graph-views/Chainview";
+import SunburstView from "./graph-views/Sunburstview";
+import AddEntityModal from "./modals/AddEntityModal";
+import TreeView from "./graph-views/Treeview";
 import type { GraphData } from "../types";
 
 interface Props {

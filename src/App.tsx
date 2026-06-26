@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import GraphPage from "./pages/IdentityGraph";
+import GraphPage from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 function App() {

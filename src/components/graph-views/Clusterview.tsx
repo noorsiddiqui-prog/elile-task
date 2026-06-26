@@ -1,4 +1,4 @@
-import type { GraphData, GraphNode } from "../types";
+import type { GraphData, GraphNode } from "../../types";
 
 interface Props {
   data: GraphData;

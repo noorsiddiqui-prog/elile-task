@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { EntityType, GraphNode } from "../types";
+import type { EntityType, GraphNode } from "../../types";
 
 interface Props {
   existingNodes: GraphNode[];
