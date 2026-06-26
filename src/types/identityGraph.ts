@@ -4,6 +4,10 @@ export interface GraphNode extends SimulationNodeDatum {
   id: string;
   type: "email" | "phone" | "username";
   label: string;
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
 }
 
 export interface GraphEdge extends SimulationLinkDatum<GraphNode> {
@@ -16,3 +20,5 @@ export interface GraphData {
   nodes: GraphNode[];
   edges: GraphEdge[];
 }
+
+export type EntityType = "email" | "phone" | "username";

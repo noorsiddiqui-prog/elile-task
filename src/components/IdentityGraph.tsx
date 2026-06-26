@@ -101,7 +101,7 @@ const IdentityGraph: React.FC<Props> = ({ data }) => {
       .attr("markerUnits", "userSpaceOnUse")
       .append("path")
       .attr("d", "M 0,-4 L 8,0 L 0,4 Z")
-      .attr("fill", "#69ee22")
+      .attr("fill", "#22d3ee")
       .attr("stroke", "none");
 
     // Canvas background
